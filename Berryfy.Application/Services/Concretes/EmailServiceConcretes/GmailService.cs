@@ -17,6 +17,7 @@ namespace Berryfy.Application.Services.Concretes.EmailServiceConcretes
         public GmailService(IOptions<GmailSettings> gmailOptions, ILogger<GmailService> logger)
         {
             _gmailOption = gmailOptions.Value;
+            _logger = logger;
         }
 
         public async Task SendEmailAsync(SendEmailRequest request)
