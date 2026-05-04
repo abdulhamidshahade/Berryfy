@@ -66,7 +66,7 @@ namespace Berryfy.Application.DI
 
             serviceDescriptors.AddScoped<IPaymentService, PaymentService>();
 
-            serviceDescriptors.AddScoped<IMailService, GmailService>();
+            serviceDescriptors.AddScoped<IMailService, ResendMailService>();
 
             serviceDescriptors.AddScoped<ICheckoutOrchestrationService, CheckoutOrchestrationService>();
             serviceDescriptors.AddScoped<IOrderCancellationService, OrderCancellationService>();

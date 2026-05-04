@@ -6,6 +6,7 @@ using Berryfy.Domain.Constants;
 using Berryfy.Domain.Entities.AuthEntities;
 using Berryfy.Infrastructure.Data;
 using Berryfy.Infrastructure.DI;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -49,7 +50,22 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<GmailSettings>(builder.Configuration.GetSection("GmailSettings"));
+builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection(ResendSettings.Name));
+builder.Services.AddHttpClient<Resend.ResendClient>();
+builder.Services.AddOptions<Resend.ResendClientOptions>()
+    .Configure<IOptions<ResendSettings>>((options, resend) =>
+    {
+        var key = resend.Value.ApiKey;
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            key = Environment.GetEnvironmentVariable("RESEND_API_KEY")
+                ?? Environment.GetEnvironmentVariable("RESEND_APITOKEN")
+                ?? string.Empty;
+        }
+
+        options.ApiToken = key;
+    });
+builder.Services.AddTransient<Resend.IResend, Resend.ResendClient>();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("App"));
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
