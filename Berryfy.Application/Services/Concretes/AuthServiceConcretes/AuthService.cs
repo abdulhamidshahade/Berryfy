@@ -6,7 +6,6 @@ using Berryfy.Application.Services.Interfaces.EmailServiceInterfaces;
 using Berryfy.Domain.Entities.AuthEntities;
 using Berryfy.Domain.Constants;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
@@ -18,7 +17,6 @@ namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
         private readonly ITokenService _tokenService;
         private readonly IRoleManagementService _roleService;
         private readonly IMailService _mailService;
-        private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
 
         public AuthService(UserManager<ApplicationUser> userManager,
@@ -26,7 +24,6 @@ namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
                            ITokenService tokenService,
                            IRoleManagementService roleService,
                            IMailService mailService,
-                           IConfiguration configuration,
                            IUserService userService)
         {
             _userManager = userManager;
@@ -34,7 +31,6 @@ namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
             _tokenService = tokenService;
             _roleService = roleService;
             _mailService = mailService;
-            _configuration = configuration;
             _userService = userService;
         }
         private static string GenerateOtpCode()
@@ -236,20 +232,19 @@ namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
                     return true;
                 }
 
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                var baseUrl = _configuration["App:BaseUrl"] ?? "https://demo.berryfy.org";
-                var resetUrl = $"{baseUrl}/auth/reset-password";
+                var code = GenerateOtpCode();
+                user.PasswordResetCode = code;
+                user.PasswordResetCodeExpiry = DateTime.UtcNow.AddMinutes(15);
+                await _userManager.UpdateAsync(user);
 
                 try
                 {
-                    await _mailService.SendPasswordResetEmailAsync(user.Email, token, resetUrl);
-                    _logger.LogInformation("Password reset email sent successfully to user {Email}", user.Email);
+                    await _mailService.SendPasswordResetCodeAsync(user.Email, code, user.UserName ?? user.Email);
+                    _logger.LogInformation("Password reset code sent successfully to user {Email}", user.Email);
                 }
                 catch (Exception emailEx)
                 {
-                    _logger.LogError(emailEx, "Failed to send password reset email to user {Email}. Token: {Token}",
-                        user.Email, token);
+                    _logger.LogError(emailEx, "Failed to send password reset code to user {Email}", user.Email);
                 }
 
                 return true;
@@ -258,6 +253,92 @@ namespace Berryfy.Application.Services.Concretes.AuthServiceConcretes
             {
                 _logger.LogError(ex, "An error occurred while processing forgot password request for email: {Email}",
                     requestDto.Email);
+                return false;
+            }
+        }
+
+        public async Task<VerifyPasswordResetCodeResponseDto?> VerifyPasswordResetCodeAsync(EmailConfirmationDto confirmationDto)
+        {
+            try
+            {
+                var normalizedEmail = confirmationDto.Email.Trim().ToLower();
+                var user = await _userManager.FindByEmailAsync(normalizedEmail);
+
+                if (user == null)
+                {
+                    _logger.LogWarning("Password reset code verification attempted for non-existent email: {Email}", normalizedEmail);
+                    return null;
+                }
+
+                if (user.PasswordResetCode == null || user.PasswordResetCodeExpiry == null)
+                {
+                    _logger.LogWarning("No password reset code found for user {Email}", normalizedEmail);
+                    return null;
+                }
+
+                if (DateTime.UtcNow > user.PasswordResetCodeExpiry)
+                {
+                    _logger.LogWarning("Password reset code expired for user {Email}", normalizedEmail);
+                    return null;
+                }
+
+                if (user.PasswordResetCode != confirmationDto.Code)
+                {
+                    _logger.LogWarning("Invalid password reset code for user {Email}", normalizedEmail);
+                    return null;
+                }
+
+                user.PasswordResetCode = null;
+                user.PasswordResetCodeExpiry = null;
+                await _userManager.UpdateAsync(user);
+
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                _logger.LogInformation("Password reset code verified for user {Email}", user.Email);
+
+                return new VerifyPasswordResetCodeResponseDto { ResetToken = resetToken };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while verifying password reset code for: {Email}",
+                    confirmationDto.Email);
+                return null;
+            }
+        }
+
+        public async Task<bool> ResendPasswordResetCodeAsync(string email)
+        {
+            try
+            {
+                var normalizedEmail = email.Trim().ToLower();
+                var user = await _userManager.FindByEmailAsync(normalizedEmail);
+
+                if (user == null)
+                {
+                    _logger.LogWarning("Resend password reset requested for non-existent email: {Email}", normalizedEmail);
+                    return true;
+                }
+
+                var code = GenerateOtpCode();
+                user.PasswordResetCode = code;
+                user.PasswordResetCodeExpiry = DateTime.UtcNow.AddMinutes(15);
+                await _userManager.UpdateAsync(user);
+
+                try
+                {
+                    await _mailService.SendPasswordResetCodeAsync(user.Email, code, user.UserName ?? user.Email);
+                    _logger.LogInformation("Password reset code resent successfully to user {Email}", user.Email);
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogError(emailEx, "Failed to resend password reset code to user {Email}", user.Email);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while resending password reset code for: {Email}", email);
                 return false;
             }
         }
