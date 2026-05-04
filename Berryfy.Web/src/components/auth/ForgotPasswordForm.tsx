@@ -8,7 +8,8 @@ export default function ForgotPasswordForm() {
     const result = await forgotPasswordAction(formData);
     
     if (result.success) {
-      redirect('/auth/forgot-password?message=Password reset instructions have been sent to your email address.');
+      const email = formData.get('email') as string;
+      redirect(`/auth/confirm-password-reset?email=${encodeURIComponent(email)}`);
     } else {
       redirect(`/auth/forgot-password?error=${encodeURIComponent(result.error || 'Failed to process request')}`);
     }
@@ -23,7 +24,7 @@ export default function ForgotPasswordForm() {
             Forgot Password
           </h2>
           <p className="text-muted">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we&apos;ll send you a 6-digit code to reset your password.
           </p>
         </div>
 
@@ -45,7 +46,7 @@ export default function ForgotPasswordForm() {
 
           <button type="submit" className="btn btn-primary w-100 mb-3">
             <i className="bi bi-envelope-arrow-up me-2"></i>
-            Send Reset Link
+            Send reset code
           </button>
 
           <div className="text-center">
