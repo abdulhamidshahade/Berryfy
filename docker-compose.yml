@@ -54,7 +54,7 @@ services:
       - App__BaseUrl=https://demo.berryfy.org
       - App__AppName=Berryfy
       - App__Version=1.0.0
-      - ResendSettings__ApiKey=${ResendSettings__ApiKey}
+      - RESEND_API_KEY=${RESEND_API_KEY}
       - ResendSettings__From=${ResendSettings__From:-support@berryfy.org}
     ports:
       - "7105:7105"
