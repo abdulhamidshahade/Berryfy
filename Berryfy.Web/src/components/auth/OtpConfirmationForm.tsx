@@ -1,16 +1,28 @@
 'use client';
 
 import { useRef, useState, useTransition, KeyboardEvent, ClipboardEvent } from 'react';
-import { confirmEmailAction, resendConfirmationAction } from '../../lib/actions/auth-actions';
+import {
+  confirmEmailAction,
+  resendConfirmationAction,
+  verifyPasswordResetCodeAction,
+  resendPasswordResetAction,
+} from '../../lib/actions/auth-actions';
 
 interface OtpConfirmationFormProps {
   email: string;
   redirectTo?: string;
+  /** Defaults to signup email verification. */
+  purpose?: 'emailConfirm' | 'passwordReset';
 }
 
 const CODE_LENGTH = 6;
 
-export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmationFormProps) {
+export default function OtpConfirmationForm({
+  email,
+  redirectTo,
+  purpose = 'emailConfirm',
+}: OtpConfirmationFormProps) {
+  const isPasswordReset = purpose === 'passwordReset';
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(''));
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -75,6 +87,26 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
     formData.set('code', code);
 
     startTransition(async () => {
+      if (isPasswordReset) {
+        const result = await verifyPasswordResetCodeAction(formData);
+        if (result.success && 'resetToken' in result) {
+          setSuccess(true);
+          setTimeout(() => {
+            const url =
+              '/auth/reset-password?email=' +
+              encodeURIComponent(email) +
+              '&token=' +
+              encodeURIComponent(result.resetToken);
+            window.location.href = url;
+          }, 800);
+        } else {
+          setError(result.error || 'Invalid or expired code. Please try again.');
+          setDigits(Array(CODE_LENGTH).fill(''));
+          inputRefs.current[0]?.focus();
+        }
+        return;
+      }
+
       const result = await confirmEmailAction(formData);
       if (result.success) {
         setSuccess(true);
@@ -101,7 +133,9 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
     formData.set('email', email);
 
     startResendTransition(async () => {
-      const result = await resendConfirmationAction(formData);
+      const result = isPasswordReset
+        ? await resendPasswordResetAction(formData)
+        : await resendConfirmationAction(formData);
       if (result.success) {
         setResendMessage('A new code has been sent to your email.');
         setDigits(Array(CODE_LENGTH).fill(''));
@@ -117,9 +151,16 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
       <div className="card-body p-4">
         <div className="text-center mb-4">
           <div className="mb-3">
-            <i className="bi bi-envelope-check text-primary" style={{ fontSize: '3rem' }}></i>
+            <i
+              className={
+                isPasswordReset ? 'bi bi-shield-lock text-primary' : 'bi bi-envelope-check text-primary'
+              }
+              style={{ fontSize: '3rem' }}
+            ></i>
           </div>
-          <h2 className="card-title fw-bold">Check your email</h2>
+          <h2 className="card-title fw-bold">
+            {isPasswordReset ? 'Enter your reset code' : 'Check your email'}
+          </h2>
           <p className="text-muted mb-1">We sent a 6-digit code to</p>
           <p className="fw-semibold">{email}</p>
         </div>
@@ -141,7 +182,7 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
         {success && (
           <div className="alert alert-success py-2" role="alert">
             <i className="bi bi-check-circle-fill me-2"></i>
-            Email verified! Redirecting…
+            {isPasswordReset ? 'Code verified! Redirecting…' : 'Email verified! Redirecting…'}
           </div>
         )}
 
@@ -186,7 +227,7 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
             ) : (
               <>
                 <i className="bi bi-check-circle me-2"></i>
-                Verify Email
+                {isPasswordReset ? 'Verify code' : 'Verify Email'}
               </>
             )}
           </button>
@@ -195,6 +236,7 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
         <div className="text-center">
           <p className="text-muted mb-1 small">Didn&apos;t receive the code?</p>
           <button
+            type="button"
             className="btn btn-link p-0 small"
             onClick={handleResend}
             disabled={isResending || isPending}
@@ -204,7 +246,10 @@ export default function OtpConfirmationForm({ email, redirectTo }: OtpConfirmati
         </div>
 
         <div className="text-center mt-3">
-          <a href="/auth/resend-confirmation" className="text-decoration-none small text-muted">
+          <a
+            href={isPasswordReset ? '/auth/forgot-password' : '/auth/resend-confirmation'}
+            className="text-decoration-none small text-muted"
+          >
             Use a different email address
           </a>
         </div>
