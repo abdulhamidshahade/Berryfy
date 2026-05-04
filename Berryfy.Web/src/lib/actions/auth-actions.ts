@@ -168,6 +168,61 @@ export async function forgotPasswordAction(formData: FormData) {
   }
 }
 
+export async function verifyPasswordResetCodeAction(formData: FormData) {
+  const email = formData.get('email') as string;
+  const code = formData.get('code') as string;
+
+  if (!email || !code) {
+    return {
+      error: 'Email and verification code are required',
+    };
+  }
+
+  try {
+    const response = await AuthService.verifyPasswordResetCode({ email, code });
+
+    if (response.isSuccess && response.data?.resetToken) {
+      return { success: true as const, resetToken: response.data.resetToken };
+    }
+
+    return {
+      error: response.statusMessage || 'Invalid or expired code. Please try again.',
+    };
+  } catch (error) {
+    console.error('Verify password reset code error:', error);
+    return {
+      error: 'An unexpected error occurred',
+    };
+  }
+}
+
+export async function resendPasswordResetAction(formData: FormData) {
+  const email = formData.get('email') as string;
+
+  if (!email) {
+    return {
+      error: 'Email is required',
+    };
+  }
+
+  try {
+    const response = await AuthService.resendPasswordReset({ email });
+
+    if (response.isSuccess) {
+      return { success: true as const };
+    }
+
+    return {
+      error: response.statusMessage || 'Failed to resend reset code',
+    };
+  } catch (error) {
+    console.error('Resend password reset error:', error);
+    return {
+      error: 'An unexpected error occurred',
+    };
+  }
+}
+
 export async function resetPasswordAction(formData: FormData) {
   const email = formData.get('email') as string;
   const token = formData.get('token') as string;

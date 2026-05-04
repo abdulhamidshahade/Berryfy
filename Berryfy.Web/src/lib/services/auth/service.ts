@@ -122,6 +122,33 @@ const newSessionId = crypto.randomUUID();
     return jsonRes;
   }
 
+  static async verifyPasswordResetCode(data: {
+    email: string;
+    code: string;
+  }): Promise<ResponseDto<{ resetToken: string }>> {
+    const response = await fetch(`${API_BASE_URL}/verify-password-reset-code`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return await response.json();
+  }
+
+  static async resendPasswordReset(data: { email: string }): Promise<ResponseDto<any>> {
+    const response = await fetch(`${API_BASE_URL}/resend-password-reset`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return await response.json();
+  }
+
   static async resetPassword(data: {
     email: string;
     token: string;
