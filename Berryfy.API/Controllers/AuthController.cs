@@ -200,7 +200,7 @@ namespace Berryfy.API.Controllers
                     {
                         IsSuccess = true,
                         StatusCode = 200,
-                        StatusMessage = "If the email address exists in our system, you will receive a password reset link."
+                        StatusMessage = "If the email address exists in our system, you will receive a 6-digit password reset code."
                     });
                 }
 
@@ -218,6 +218,103 @@ namespace Berryfy.API.Controllers
                     IsSuccess = false,
                     StatusCode = 500,
                     StatusMessage = "An error occurred while processing your request."
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("verify-password-reset-code")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyPasswordResetCode([FromBody] EmailConfirmationDto requestDto)
+        {
+            if (requestDto == null || !ModelState.IsValid)
+            {
+                return StatusCode(400, new ResponseDto<VerifyPasswordResetCodeResponseDto>
+                {
+                    IsSuccess = false,
+                    StatusCode = 400,
+                    StatusMessage = "Invalid request data.",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                });
+            }
+
+            try
+            {
+                var result = await _authService.VerifyPasswordResetCodeAsync(requestDto);
+
+                if (result != null && !string.IsNullOrEmpty(result.ResetToken))
+                {
+                    return Ok(new ResponseDto<VerifyPasswordResetCodeResponseDto>
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        StatusMessage = "Code verified. You can now set a new password.",
+                        Data = result
+                    });
+                }
+
+                return BadRequest(new ResponseDto<VerifyPasswordResetCodeResponseDto>
+                {
+                    IsSuccess = false,
+                    StatusCode = 400,
+                    StatusMessage = "Invalid or expired code. Please try again or request a new code."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseDto<VerifyPasswordResetCodeResponseDto>
+                {
+                    IsSuccess = false,
+                    StatusCode = 500,
+                    StatusMessage = "An error occurred while verifying your code."
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("resend-password-reset")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResendPasswordReset([FromBody] ForgotPasswordRequestDto requestDto)
+        {
+            if (requestDto == null || !ModelState.IsValid)
+            {
+                return StatusCode(400, new ResponseDto<object>
+                {
+                    IsSuccess = false,
+                    StatusCode = 400,
+                    StatusMessage = "Invalid request data.",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                });
+            }
+
+            try
+            {
+                var result = await _authService.ResendPasswordResetCodeAsync(requestDto.Email);
+
+                if (result)
+                {
+                    return Ok(new ResponseDto<object>
+                    {
+                        IsSuccess = true,
+                        StatusCode = 200,
+                        StatusMessage = "If the email address exists in our system, a new reset code has been sent."
+                    });
+                }
+
+                return StatusCode(500, new ResponseDto<object>
+                {
+                    IsSuccess = false,
+                    StatusCode = 500,
+                    StatusMessage = "An error occurred while sending the reset code."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseDto<object>
+                {
+                    IsSuccess = false,
+                    StatusCode = 500,
+                    StatusMessage = "An error occurred while sending the reset code."
                 });
             }
         }
