@@ -58,7 +58,7 @@ builder.Services.AddOptions<Resend.ResendClientOptions>()
         var key = resend.Value.ApiKey;
         if (string.IsNullOrWhiteSpace(key))
         {
-            key = Environment.GetEnvironmentVariable("RESEND_API_KEY")
+            key = Environment.GetEnvironmentVariable("ResendSettings__ApiKey")
                 ?? Environment.GetEnvironmentVariable("RESEND_APITOKEN")
                 ?? string.Empty;
         }
