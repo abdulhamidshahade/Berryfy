@@ -32,6 +32,6 @@ ENV ASPNETCORE_URLS=http://+:7105
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 HEALTHCHECK --interval=15s --timeout=10s --start-period=240s --retries=12 \
-    CMD curl -fsS http://localhost:7105/health/live || exit 1
+    CMD curl -fsS http://127.0.0.1:7105/health/live || exit 1
 
 ENTRYPOINT ["dotnet", "Berryfy.API.dll"]

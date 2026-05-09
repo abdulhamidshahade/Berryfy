@@ -37,7 +37,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7105
-      - AllowedHosts=${ALLOWED_HOSTS}
+      - AllowedHosts=${ALLOWED_HOSTS};localhost;127.0.0.1;backend
       - Cors__Origins=http://localhost:30305;http://frontend:30305
       - Database__RunMigrationsOnStartup=true
       - Database__RunSeedOnStartup=true
@@ -62,7 +62,7 @@ services:
       sqlserver:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:7105/health/live"]
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:7105/health/live"]
       interval: 15s
       timeout: 10s
       retries: 12
