@@ -181,8 +181,6 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddAuthorization();
-
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -346,6 +344,9 @@ app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks
 {
     ResponseWriter = async (context, report) =>
     {
+        context.Response.StatusCode = report.Status == Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy
+            ? StatusCodes.Status200OK
+            : StatusCodes.Status503ServiceUnavailable;
         context.Response.ContentType = "application/json";
         var result = new
         {
@@ -360,6 +361,12 @@ app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks
         await context.Response.WriteAsJsonAsync(result);
     }
 }).DisableRateLimiting();
+
+// Liveness only (no DB): use for Docker HEALTHCHECK so the API container can become healthy
+// while /health remains a full readiness check (database + migrations).
+app.MapGet("/health/live", () => Results.Text("OK", "text/plain"))
+    .DisableRateLimiting()
+    .WithTags("Health");
 
 app.UseSerilogRequestLogging();
 
