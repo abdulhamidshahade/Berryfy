@@ -6,7 +6,6 @@ using Berryfy.Application.Services.Interfaces.AuthServiceInterfaces;
 using Berryfy.Application.Services.Interfaces.ShoppingCartServiceInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Berryfy.API.Controllers
 {
