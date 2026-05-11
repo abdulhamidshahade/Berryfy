@@ -1,5 +1,4 @@
-﻿using Berryfy.API.Controllers;
-using Berryfy.Application.Dtos;
+﻿using Berryfy.Application.Dtos;
 using Berryfy.Application.Dtos.AuthDtos;
 
 namespace Berryfy.Application.Services.Interfaces.AuthServiceInterfaces
