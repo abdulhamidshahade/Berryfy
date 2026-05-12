@@ -2,7 +2,7 @@
 
 namespace Berryfy.Application.Authorization.Attributes
 {
-    public class UserAndAboveAttribute : AuthorizeRolesAttribute
+    public class UserAndAboveAttribute
     {
         public UserAndAboveAttribute() : base(RoleConstants.SuperAdmin, RoleConstants.Admin, RoleConstants.User) { }
     }
