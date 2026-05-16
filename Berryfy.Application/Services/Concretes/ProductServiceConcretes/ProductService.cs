@@ -32,10 +32,7 @@ namespace Berryfy.Application.Services.Concretes.ProductServiceConcretes
             _logger = logger;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        
         public async Task<IReadOnlyList<ProductDto>> GetAllAsync()
         {
             var products = await _productRepository.GetAllAsync();
@@ -72,17 +69,6 @@ namespace Berryfy.Application.Services.Concretes.ProductServiceConcretes
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="productDto"></param>
-        /// <param name="categories"></param>
-        /// <returns></returns> <summary>
-        /// 
-        /// </summary>
-        /// <param name="productDto"></param>
-        /// <param name="categories"></param>
-        /// <returns></returns>
         public async Task<ProductDto> CreateAsync(CreateProductDto productDto, List<int> categories)
         {
             if (productDto == null)
@@ -113,12 +99,7 @@ namespace Berryfy.Application.Services.Concretes.ProductServiceConcretes
             return _mapper.Map<ProductDto>(await _productRepository.GetByIdAsync(createdProduct.Id));
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="productDto"></param>
-        /// <param name="categories"></param>
-        /// <returns></returns>
+        
         public async Task<ProductDto> UpdateAsync(int id, UpdateProductDto productDto, List<int> categories)
         {
             if (productDto == null)
