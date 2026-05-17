@@ -27,7 +27,6 @@ namespace Berryfy.Infrastructure.Repositories.OrderConcretes
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
-        //TODO to fix
         public async Task<List<Order>> GetUserOrdersAsync(int userId, int page = 1, int pageSize = 10)
         {
             return await _context.Orders
@@ -49,7 +48,7 @@ namespace Berryfy.Infrastructure.Repositories.OrderConcretes
                 .OrderByDescending(o => o.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .AsNoTracking() // Optimize for read-only operations
+                .AsNoTracking()
                 .ToListAsync();
         }
 
