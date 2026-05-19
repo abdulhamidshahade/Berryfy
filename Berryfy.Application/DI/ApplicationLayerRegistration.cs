@@ -30,8 +30,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-// TODO: Use here Microsoft.Extensions.DependencyInjection namespace
-
 namespace Berryfy.Application.DI
 {
     public static class ApplicationLayerRegistration
