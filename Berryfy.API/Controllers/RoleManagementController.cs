@@ -207,7 +207,7 @@ namespace Berryfy.API.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = 404,
-                    StatusMessage = "User not found."
+                    StatusMessage = $"User with given {userId} not found."
                 });
             }
 
