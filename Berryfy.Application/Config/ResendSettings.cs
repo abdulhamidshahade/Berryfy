@@ -4,7 +4,7 @@ namespace Berryfy.Application.Config
     {
         public const string Name = "ResendSettings";
 
-        public string ApiKey { get; set; } = string.Empty;
+        public string ApiKey { get; set; }
         public string From { get; set; } = "support@berryfy.org";
     }
 }
