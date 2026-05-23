@@ -28,8 +28,6 @@ namespace Berryfy.Infrastructure.Repositories.InventoryConcretes
             return null;
         }
 
-
-        //TODO add in interface
         public async Task<List<InventoryLog>> GetInventoryHistoryAsync(int productId, int limit = 50)
         {
             return await _context.InventoryLogs
