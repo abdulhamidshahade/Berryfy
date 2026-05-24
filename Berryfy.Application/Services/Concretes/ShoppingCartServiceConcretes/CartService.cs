@@ -53,11 +53,6 @@ namespace Berryfy.Application.Services.Concretes.ShoppingCartServiceConcretes
             _orderRepository = orderRepository;
         }
 
-        /// <summary>
-        /// <see cref="CouponDto.Value"/> is authoritative: for <see cref="CouponType.Percentage"/> use a fraction in (0,1] (e.g. 0.20 = 20%),
-        /// or a legacy whole-number percent (&gt; 1, e.g. 20). For <see cref="CouponType.FixedAmount"/>, <c>Value</c> is currency off.
-        /// <see cref="CouponDto.DiscountAmount"/> is a display companion; used as fallback when <c>Value</c> is missing.
-        /// </summary>
         private static decimal GetPercentageRate(CouponDto coupon)
         {
             if (coupon.Value > 0)
