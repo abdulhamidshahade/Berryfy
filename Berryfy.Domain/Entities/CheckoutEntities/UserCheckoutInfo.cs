@@ -6,7 +6,6 @@ namespace Berryfy.Domain.Entities.CheckoutEntities
         public int UserId { get; set; }
         public string? SessionId { get; set; }
         
-        // Checkout Information
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -18,7 +17,6 @@ namespace Berryfy.Domain.Entities.CheckoutEntities
         public string ZipCode { get; set; } = string.Empty;
         public string Country { get; set; } = "US";
         
-        // Payment Billing Information (no sensitive card data)
         public string? PayerName { get; set; }
         public string? PayerEmail { get; set; }
         public string? BillingAddress1 { get; set; }
@@ -28,7 +26,6 @@ namespace Berryfy.Domain.Entities.CheckoutEntities
         public string? BillingPostalCode { get; set; }
         public string? BillingCountry { get; set; }
         
-        // Timestamps
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastUsedAt { get; set; }
