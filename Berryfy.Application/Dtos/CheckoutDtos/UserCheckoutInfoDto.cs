@@ -6,7 +6,6 @@ namespace Berryfy.Application.Dtos.CheckoutDtos
         public int UserId { get; set; }
         public string? SessionId { get; set; }
         
-        // Checkout Information
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -18,7 +17,6 @@ namespace Berryfy.Application.Dtos.CheckoutDtos
         public string ZipCode { get; set; } = string.Empty;
         public string Country { get; set; } = "US";
         
-        // Payment Billing Information
         public string? PayerName { get; set; }
         public string? PayerEmail { get; set; }
         public string? BillingAddress1 { get; set; }
