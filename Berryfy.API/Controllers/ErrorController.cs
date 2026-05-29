@@ -31,13 +31,13 @@ namespace Berryfy.API.Controllers
             if (environment.IsDevelopment())
             {
                 return Problem(
-                    title: "An error occurred",
+                    title: "An has been error occurred",
                     detail: feature?.Error?.Message,
                     statusCode: StatusCodes.Status500InternalServerError);
             }
 
             return Problem(
-                title: "An error occurred",
+                title: "An has been error occurred",
                 statusCode: StatusCodes.Status500InternalServerError);
         }
     }
