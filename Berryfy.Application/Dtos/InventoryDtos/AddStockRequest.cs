@@ -4,7 +4,7 @@
     {
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public string Notes { get; set; } = string.Empty;
+        public string Notes { get; set; }
         public int? PerformedByUserId { get; set; }
     }
 }
