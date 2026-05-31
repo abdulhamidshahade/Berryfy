@@ -10,7 +10,7 @@ namespace Berryfy.Domain.Entities.ShoppingCartEntities
     public class Cart : IAuditableEntity
     {
         public int Id { get; set; }
-        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public List<CartItem> CartItems { get; set; }
         public int? UserId { get; set; }
         public string? SessionId { get; set; }
 
@@ -44,8 +44,6 @@ namespace Berryfy.Domain.Entities.ShoppingCartEntities
         public List<CartCoupon> CartCoupons { get; set; } = new List<CartCoupon>();
         public ApplicationUser User { get; set; }
 
-
-        //TODO fix CalculateTax method to use actual tax rules
         private decimal CalculateTax()
         {
             var taxableAmount = SubTotal - DiscountTotal;
