@@ -2,7 +2,7 @@
 {
     public class ApplyCouponRequest
     {
-        public string CouponCode { get; set; } = string.Empty;
+        public string CouponCode { get; set; }
     }
 
 }
