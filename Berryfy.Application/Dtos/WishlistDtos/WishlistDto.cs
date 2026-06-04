@@ -11,6 +11,6 @@
         public DateTime UpdatedDate { get; set; }
         public int ItemCount { get; set; }
         public decimal TotalValue { get; set; }
-        public List<WishlistItemDto> Items { get; set; } = new List<WishlistItemDto>();
+        public List<WishlistItemDto> Items { get; set; }
     }
 }
