@@ -26,8 +26,7 @@ namespace Berryfy.Domain.Entities.CheckoutEntities
         public string? BillingPostalCode { get; set; }
         public string? BillingCountry { get; set; }
         
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? LastUsedAt { get; set; }
+        public DateTime CreatedAt { get; set; } 
+        public DateTime UpdatedAt { get; set; }
     }
 }
