@@ -10,6 +10,6 @@
         public double AverageWishlistsPerUser { get; set; }
         public int PublicWishlists { get; set; }
         public int PrivateWishlists { get; set; }
-        public List<RecentActivityDto> RecentActivity { get; set; } = new List<RecentActivityDto>();
+        public List<RecentActivityDto> RecentActivity { get; set; }
     }
 }
