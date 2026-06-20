@@ -6,6 +6,6 @@
         public int StatusCode { get; set; }
         public string? StatusMessage { get; set; }
         public T? Data { get; set; }
-        public List<string> Errors { get; set; } = new();
+        public List<string> Errors { get; set; }
     }
 }
