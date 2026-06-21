@@ -6,7 +6,7 @@
         public int CouponId { get; set; }
         public int UserId { get; set; }
         public int CartId { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
         public decimal DiscountAmount { get; set; }
         public DateTime AppliedAt { get; set; }
     }
