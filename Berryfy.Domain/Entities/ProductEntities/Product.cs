@@ -16,7 +16,7 @@ namespace Berryfy.Domain.Entities.ProductEntities
         public int ReservedStock { get; set; }
         public int LowStockThreshold { get; set; } = 5;
         public bool IsActive { get; set; } = true;
-        public string SKU { get; set; } = string.Empty;
+        public string SKU { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public List<InventoryLog> InventoryLogs { get; set; }
