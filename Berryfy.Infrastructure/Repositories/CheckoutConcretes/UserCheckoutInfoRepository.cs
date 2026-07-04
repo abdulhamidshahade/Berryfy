@@ -30,7 +30,6 @@ namespace Berryfy.Infrastructure.Repositories.CheckoutConcretes
         {
             checkoutInfo.CreatedAt = DateTime.UtcNow;
             checkoutInfo.UpdatedAt = DateTime.UtcNow;
-            checkoutInfo.LastUsedAt = DateTime.UtcNow;
             
             _context.UserCheckoutInfos.Add(checkoutInfo);
             await _context.SaveChangesAsync();
@@ -40,7 +39,6 @@ namespace Berryfy.Infrastructure.Repositories.CheckoutConcretes
         public async Task<bool> UpdateAsync(UserCheckoutInfo checkoutInfo)
         {
             checkoutInfo.UpdatedAt = DateTime.UtcNow;
-            checkoutInfo.LastUsedAt = DateTime.UtcNow;
             
             _context.UserCheckoutInfos.Update(checkoutInfo);
             return await _context.SaveChangesAsync() > 0;
@@ -60,7 +58,6 @@ namespace Berryfy.Infrastructure.Repositories.CheckoutConcretes
             var checkoutInfo = await _context.UserCheckoutInfos.FindAsync(id);
             if (checkoutInfo == null) return false;
 
-            checkoutInfo.LastUsedAt = DateTime.UtcNow;
             return await _context.SaveChangesAsync() > 0;
         }
     }
