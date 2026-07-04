@@ -154,6 +154,7 @@ namespace Berryfy.Application.Services.Concretes.CheckoutServiceConcretes
                 BillingState = entity.BillingState,
                 BillingPostalCode = entity.BillingPostalCode,
                 BillingCountry = entity.BillingCountry,
+                LastUsedAt = entity.LastUsedAt
             };
         }
     }

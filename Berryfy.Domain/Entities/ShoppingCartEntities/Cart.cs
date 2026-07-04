@@ -10,7 +10,7 @@ namespace Berryfy.Domain.Entities.ShoppingCartEntities
     public class Cart : IAuditableEntity
     {
         public int Id { get; set; }
-        public List<CartItem> CartItems { get; set; }
+        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
         public int? UserId { get; set; }
         public string? SessionId { get; set; }
 
