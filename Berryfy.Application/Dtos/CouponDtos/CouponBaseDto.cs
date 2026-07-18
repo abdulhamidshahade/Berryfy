@@ -7,7 +7,7 @@ namespace Berryfy.Application.Dtos.CouponDtos
         public string Code { get; set; }
         public decimal DiscountAmount { get; set; }
         public decimal MinimumOrderAmount { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
         public bool IsActive { get; set; }
 
         public CouponType Type { get; set; }
