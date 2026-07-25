@@ -4,7 +4,7 @@
     {
         public int UserId { get; set; }
         public int CartId { get; set; }
-        public string CustomerEmail { get; set; } = string.Empty;
+        public string CustomerEmail { get; set; }
         public string? CustomerPhone { get; set; }
         public string? ShippingName { get; set; }
         public string? ShippingAddressLine1 { get; set; }
