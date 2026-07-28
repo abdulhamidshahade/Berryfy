@@ -13,7 +13,7 @@ namespace Berryfy.Application.Dtos.OrderDtos
         public decimal ShippingAmount { get; set; }
         public decimal Total { get; set; }
         public decimal DiscountTotal { get; set; } = 0;
-        public string CustomerEmail { get; set; } = string.Empty;
+        public string CustomerEmail { get; set; }
         public string? CustomerPhone { get; set; }
         public string? PaymentProvider { get; set; }
         public int PaymentTransactionId { get; set; }
