@@ -11,7 +11,7 @@ namespace Berryfy.Application.Dtos.PaymentDtos
         public PaymentMethod Method { get; set; }
 
       
-        public string Provider { get; set; } = string.Empty;
+        public string Provider { get; set; }
 
        
         
