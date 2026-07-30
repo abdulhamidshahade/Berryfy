@@ -86,9 +86,8 @@ export async function loginFormSubmitAction(formData: FormData) {
 
   if (result.emailNotConfirmed) {
     const email = formData.get('email') as string;
-    redirect(
-      `/auth/resend-confirmation?email=${encodeURIComponent(email)}&error=${encodeURIComponent(result.error || 'Email not confirmed')}`
-    );
+    const message = result.error || 'Email not confirmed. Enter the 6-digit code from your email, or resend a new code.';
+    redirect(`/auth/confirm-email?email=${encodeURIComponent(email)}&error=${encodeURIComponent(message)}`);
   }
 
   redirect(`/auth/login?error=${encodeURIComponent(result.error || 'Login failed')}`);
@@ -320,7 +319,7 @@ export async function resendConfirmationAction(formData: FormData) {
       return { success: true };
     } else {
       return {
-        error: response.statusMessage || 'Failed to send confirmation email',
+        error: response.statusMessage || 'Failed to send confirmation code',
       };
     }
   } catch (error) {
