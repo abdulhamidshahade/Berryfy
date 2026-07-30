@@ -7,6 +7,7 @@ interface ResendConfirmationPageProps {
     email?: string;
     error?: string;
     message?: string;
+    redirectTo?: string;
   }>;
 }
 
@@ -17,7 +18,7 @@ export default async function ResendConfirmationPage({ searchParams }: ResendCon
   }
 
   const params = await searchParams;
-  const { email, error, message } = params;
+  const { email, error, message, redirectTo } = params;
 
   return (
     <div className="container py-5">
@@ -37,7 +38,7 @@ export default async function ResendConfirmationPage({ searchParams }: ResendCon
             </div>
           )}
 
-          <ResendConfirmationForm email={email} />
+          <ResendConfirmationForm email={email} redirectTo={redirectTo} />
         </div>
       </div>
     </div>
