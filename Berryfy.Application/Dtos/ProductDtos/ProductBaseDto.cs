@@ -13,6 +13,6 @@
 
         public bool IsActive { get; set; } = true;
 
-        public string SKU { get; set; } = string.Empty;
+        public string SKU { get; set; }
     }
 }
