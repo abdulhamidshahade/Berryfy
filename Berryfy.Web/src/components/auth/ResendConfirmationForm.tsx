@@ -3,18 +3,41 @@ import { redirect } from 'next/navigation';
 
 interface ResendConfirmationFormProps {
   email?: string;
+  redirectTo?: string;
 }
 
-export default function ResendConfirmationForm({ email }: ResendConfirmationFormProps) {
+export default function ResendConfirmationForm({ email, redirectTo }: ResendConfirmationFormProps) {
   async function handleResendConfirmation(formData: FormData) {
     'use server';
     
     const result = await resendConfirmationAction(formData);
+    const submittedEmail = (formData.get('email') as string) || '';
+    const submittedRedirectTo = formData.get('redirectTo') as string | null;
     
     if (result.success) {
-      redirect('/auth/resend-confirmation?message=If your email exists in our system, a new confirmation link has been sent.');
+      let url =
+        '/auth/confirm-email?email=' +
+        encodeURIComponent(submittedEmail) +
+        '&message=' +
+        encodeURIComponent('If your email exists in our system, a new 6-digit confirmation code has been sent.');
+
+      if (submittedRedirectTo && submittedRedirectTo.startsWith('/') && !submittedRedirectTo.startsWith('//')) {
+        url += '&redirectTo=' + encodeURIComponent(submittedRedirectTo);
+      }
+
+      redirect(url);
     } else {
-      redirect(`/auth/resend-confirmation?error=${encodeURIComponent(result.error || 'Failed to send confirmation email')}`);
+      let url =
+        '/auth/resend-confirmation?email=' +
+        encodeURIComponent(submittedEmail) +
+        '&error=' +
+        encodeURIComponent(result.error || 'Failed to send confirmation code');
+
+      if (submittedRedirectTo && submittedRedirectTo.startsWith('/') && !submittedRedirectTo.startsWith('//')) {
+        url += '&redirectTo=' + encodeURIComponent(submittedRedirectTo);
+      }
+
+      redirect(url);
     }
   }
 
@@ -27,11 +50,13 @@ export default function ResendConfirmationForm({ email }: ResendConfirmationForm
             Resend Confirmation Email
           </h2>
           <p className="text-muted">
-            Enter your email address and we'll send you a new confirmation link.
+            Enter your email address and we'll send you a new 6-digit confirmation code.
           </p>
         </div>
 
         <form action={handleResendConfirmation}>
+          <input type="hidden" name="redirectTo" value={redirectTo || ''} />
+
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               <i className="bi bi-envelope me-1"></i>
@@ -50,10 +75,25 @@ export default function ResendConfirmationForm({ email }: ResendConfirmationForm
 
           <button type="submit" className="btn btn-primary w-100 mb-3">
             <i className="bi bi-send me-2"></i>
-            Send Confirmation Email
+            Send confirmation code
           </button>
 
           <div className="text-center">
+            {email && (
+              <p className="mb-2">
+                Already have a code?{' '}
+                <a
+                  href={`/auth/confirm-email?email=${encodeURIComponent(email)}${
+                    redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+                      ? `&redirectTo=${encodeURIComponent(redirectTo)}`
+                      : ''
+                  }`}
+                  className="text-decoration-none"
+                >
+                  Enter verification code
+                </a>
+              </p>
+            )}
             <p className="mb-0">
               Already confirmed your email?{' '}
               <a href="/auth/login" className="text-decoration-none">
