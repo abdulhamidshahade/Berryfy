@@ -6,6 +6,7 @@ interface EmailConfirmationPageProps {
   searchParams: Promise<{
     email?: string;
     error?: string;
+    message?: string;
     redirectTo?: string;
   }>;
 }
@@ -17,7 +18,7 @@ export default async function EmailConfirmationPage({ searchParams }: EmailConfi
   }
 
   const params = await searchParams;
-  const { email, error, redirectTo } = params;
+  const { email, error, message, redirectTo } = params;
 
   if (!email) {
     redirect('/auth/resend-confirmation?error=Missing email address. Please request a new confirmation code.');
@@ -31,6 +32,12 @@ export default async function EmailConfirmationPage({ searchParams }: EmailConfi
             <div className="alert alert-danger mb-4" role="alert">
               <i className="bi bi-exclamation-triangle me-2"></i>
               {decodeURIComponent(error)}
+            </div>
+          )}
+          {message && (
+            <div className="alert alert-success mb-4" role="alert">
+              <i className="bi bi-check-circle me-2"></i>
+              {decodeURIComponent(message)}
             </div>
           )}
           <OtpConfirmationForm email={email} redirectTo={redirectTo} />
