@@ -16,6 +16,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/berryfyPortfolio
+            cd /var/www/Berryfy
             git pull origin master
             docker compose up -d --build
