@@ -50,7 +50,7 @@ services:
       - ApiSettings__JwtOptions__Issuer=https://berryfy.org
       - ApiSettings__JwtOptions__Audience=berryfy-api
       - ApiSettings__JwtOptions__RequireHttps=false
-      - OpenApi__EnableInProduction=false
+      - OpenApi__EnableInProduction=true
       - App__BaseUrl=https://demo.berryfy.org
       - App__AppName=Berryfy
       - App__Version=1.0.0
