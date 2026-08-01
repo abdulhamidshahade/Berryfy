@@ -6,7 +6,7 @@ namespace Berryfy.Application.Dtos.CheckoutDtos
         public int UserId { get; set; }
         public string? SessionId { get; set; }
         
-        public string FirstName { get; set; } = string.Empty;
+        public string FirstName { get; set; }
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? Phone { get; set; }
