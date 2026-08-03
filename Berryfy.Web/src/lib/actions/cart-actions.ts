@@ -6,7 +6,7 @@ import { CartService } from "../services/cart/service";
 import { ICartService } from "../services/cart/interface";
 import { cookies } from "next/headers";
 import { ProductService } from "../services/product/service";
-import { AddToCartDto } from "../../types/cart";
+import { AddToCartDto, CartDto } from "../../types/cart";
 
 const cartService: ICartService = new CartService();
 const productService = new ProductService();
@@ -38,7 +38,7 @@ export async function getCart() {
   }
 }
 
-export async function addToCart(formData: FormData) {
+export async function addToCart(formData: FormData): Promise<CartDto> {
   try {
     const productId = parseInt(formData.get("productId") as string);
     const quantity = parseInt(formData.get("quantity") as string) || 1;
@@ -64,10 +64,14 @@ export async function addToCart(formData: FormData) {
       cartId: cart.id,
     };
 
-    await cartService.addItem(itemToAdd);
+    const updatedCart = await cartService.addItem(itemToAdd);
 
     revalidatePath("/cart");
     revalidatePath("/products");
+    revalidatePath(`/products/${productId}`);
+    revalidatePath("/");
+
+    return updatedCart;
   } catch (error) {
     console.error("Error adding to cart:", error);
     throw new Error(
