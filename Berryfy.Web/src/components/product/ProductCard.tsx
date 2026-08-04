@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { ProductDto } from "../../types/product";
 import Link from "next/link";
 import AddToCartForm from "../cart/AddToCartForm";
@@ -17,10 +20,13 @@ export default function ProductCard({
 }: ProductCardProps) {
   const displayName = product.name.replace(/\s*\([^)]*\)\s*/g, " ").trim();
 
+  const [pendingAdded, setPendingAdded] = useState(0);
+  const displayStockQuantity = Math.max(0, product.stockQuantity - pendingAdded);
+
   const stockStatus =
-    product.stockQuantity <= product.lowStockThreshold
+    displayStockQuantity <= product.lowStockThreshold
       ? "danger"
-      : product.stockQuantity <= product.lowStockThreshold * 2
+      : displayStockQuantity <= product.lowStockThreshold * 2
       ? "warning"
       : "success";
 
@@ -85,7 +91,7 @@ export default function ProductCard({
                 <i className={`bi ${stockIcon} me-1`}></i>
                 {stockStatus === "success"
                   ? "In Stock"
-                  : `Only ${product.stockQuantity} left`}
+                  : `Only ${displayStockQuantity} left`}
               </span>
             </div>
 
@@ -133,6 +139,8 @@ export default function ProductCard({
                     productId={product.id}
                     availableStock={product.stockQuantity - product.reservedStock}
                     isInStock={product.isActive && product.stockQuantity > product.reservedStock}
+                    unitPrice={product.price}
+                    onPendingQuantityChange={setPendingAdded}
                     buttonSize="sm"
                     className="btn btn-primary w-100"
                   />
