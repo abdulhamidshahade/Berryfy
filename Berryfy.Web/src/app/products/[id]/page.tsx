@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProduct } from '../../../lib/actions/product-actions';
-import AddToCartForm from '../../../components/cart/AddToCartForm';
 import WishlistButton from '../../../components/product/WishlistButton';
+import ProductPurchasePanel from '../../../components/product/ProductPurchasePanel';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -21,20 +21,6 @@ export default async function ProductDetailPage({ params }: PageProps) {
   if (!product || !product.isActive) {
     notFound();
   }
-
-  const stockStatus =
-    product.stockQuantity <= product.lowStockThreshold
-      ? 'danger'
-      : product.stockQuantity <= product.lowStockThreshold * 2
-      ? 'warning'
-      : 'success';
-
-  const stockIcon =
-    stockStatus === 'danger'
-      ? 'bi-exclamation-triangle-fill'
-      : stockStatus === 'warning'
-      ? 'bi-exclamation-circle-fill'
-      : 'bi-check-circle-fill';
 
   const availableStock = product.stockQuantity - product.reservedStock;
   const isInStock = availableStock > 0;
@@ -109,55 +95,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <p className="lead">{product.description}</p>
             </div>
 
-            <div className="mb-4">
-              <div className="row">
-                <div className="col-sm-6">
-                  <h6>Availability</h6>
-                  <span className={`badge bg-${stockStatus} fs-6`}>
-                    <i className={`bi ${stockIcon} me-1`}></i>
-                    {stockStatus === 'success'
-                      ? 'In Stock'
-                      : `Only ${product.stockQuantity} left`}
-                  </span>
-                </div>
-                <div className="col-sm-6">
-                  <h6>Stock</h6>
-                  <span className="badge bg-secondary fs-6">
-                    <i className="bi bi-box-seam me-1"></i>
-                    {availableStock} available
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="d-grid gap-2">
-              <AddToCartForm
-                productId={product.id}
-                availableStock={availableStock}
-                isInStock={isInStock}
-                showQuantitySelector={true}
-                buttonText={isInStock ? 'Add to Cart' : 'Out of Stock'}
-                buttonSize="lg"
-                className="btn btn-primary w-100"
-              />
-              
-              <div className="row g-2">
-                <div className="col">
-                  <WishlistButton 
-                    productId={product.id}
-                    size="md"
-                    variant="button"
-                    className="w-100"
-                    returnUrl={`/products/${product.id}`}
-                  />
-                </div>
-                <div className="col">
-                  <Link href="#" className="btn btn-outline-info w-100">
-                    <i className="bi bi-share me-2"></i>Share
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <ProductPurchasePanel
+              productId={product.id}
+              price={product.price}
+              stockQuantity={product.stockQuantity}
+              reservedStock={product.reservedStock}
+              lowStockThreshold={product.lowStockThreshold}
+              isActive={product.isActive}
+              wishlistSlot={
+                <WishlistButton
+                  productId={product.id}
+                  size="md"
+                  variant="button"
+                  className="w-100"
+                  returnUrl={`/products/${product.id}`}
+                />
+              }
+            />
 
             <div className="mt-4 pt-4 border-top">
               <h6>Product Features</h6>
