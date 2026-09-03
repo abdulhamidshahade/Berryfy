@@ -57,7 +57,7 @@ services:
       - ResendSettings__ApiKey=${ResendSettings__ApiKey:-${RESEND_API_KEY:-${RESEND_APITOKEN}}}
       - ResendSettings__From=${ResendSettings__From:-support@berryfy.org}
     ports:
-      - "7105:7105"
+      - "127.0.0.1:7105:7105"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -94,7 +94,7 @@ services:
       - USE_CLOUDFLARE=false
       - COOKIE_SECURE=${COOKIE_SECURE:-false}
     ports:
-      - "30305:30305"
+      - "127.0.0.1:30305:30305"
     depends_on:
       backend:
         condition: service_healthy
